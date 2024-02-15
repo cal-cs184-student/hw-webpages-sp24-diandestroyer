@@ -1,7 +1,209 @@
-<html>
-	<head>
-	</head>
-	<body>
-		Homework 1 index.html here
-	</body>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<style>
+  body {
+    padding: 100px;
+    width: 1000px;
+    margin: auto;
+    text-align: left;
+    font-weight: 300;
+    font-family: 'Open Sans', sans-serif;
+    color: #121212;
+  }
+  h1, h2, h3, h4 {
+    font-family: 'Source Sans Pro', sans-serif;
+  }
+  table {
+  max-width: 100%; 
+  }
+</style>
+<title>CS 184/284A Rasterizer</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet">
+</head>
+
+
+<body>
+
+<h1 align="middle">CS 184/284A: Computer Graphics and Imaging, Spring 2024</h1>
+<h1 align="middle">Homework 1: Rasterizer</h1>
+<h2 align="middle">Lawrence Lam</h2>
+<br><br>
+
+<div>
+
+<h2 align="middle">Overview</h2>
+<p>Give a high-level overview of what you implemented in this homework Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the homework.</p>
+<p>In this homework I implimented basic pixel sampling then moved on to super sampling where we were taking multiple samples per pixel. I then implimented transforms and barycentric coordinates which where concepts mathematical concepts shown in the slides.
+  In class I actually had quite a hard time grasping these concepts but when coding them out and seeing their effect on our renders in live time it began to make more sense conceptually to me. After that we moved on to implementing sampling on textures, where we culminated on level sampling.
+Level sampling was by far the most complex and mipmapping was another concept that didnt quite hit it in class as the concept of distance and how to generate those distances was a little bit foreign. But once coding it out and working with it first hand, I believe I have a much better grasp on the topic.   </p>
+<h2 align="middle">Section I: Rasterization</h2>
+
+<h3 align="middle">Part 1: Rasterizing single-color triangles</h3>
+
+<p>Rasterizing triangles begins by first determining the bounding box by using the vertices of the triangles. 
+  Given this bounding box we sample every pixel within the bounding box and perform the point-in-triangle tests to determine if the pixel should be filled or not.
+  Since my algorithm is starting at the minimum x and y coordinates of the 3 vertices of the traingle and ending at the max, it is exactly traversing the bounding box of the triangle and is therefore no worse than itself. 
+</p>
+<p>Here is an example 2x2 gridlike structure using an HTML table. Each <b>tr</b> is a row and each <b>td</b> is a column in that row. You might find this useful for framing and showing your result images in an organized fashion.</p>
+
+<div align="middle">
+  <table border="1">
+    <tr>
+      <td>
+        <img src="images/Part_1.png" align="middle" width="400px"/>
+        <figcaption align="middle">Task 1</figcaption>
+      </td>
+      <td>
+        <img src="images/Part_2_1p.png" align="middle" width="400px"/>
+        <figcaption align="middle">Task 2: sampling rate 1</figcaption>
+      </td>
+    </tr>
+    <br>
+    <tr>
+      <td>
+        <img src="images/Part_2_4p.png" align="middle" width="400px"/>
+        <figcaption align="middle">Task 2: sampling rate 4</figcaption>
+      </td>
+      <td>
+        <img src="images/Part_2_16p.png" align="middle" width="400px"/>
+        <figcaption align="middle">Task 2: sampling rate 16</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+
+
+<h3 align="middle">Part 2: Antialiasing triangles</h3>
+<p>My method for super sampling is to take every pixel and split it into some NxN grid of sampling points where N is the sampling rate; we then downsample by averaging the values we found in the NxN grid to show as the whole pixel color.
+  My algorithm takes every pixel (x,y) and uses another set of nested for loop to split the pixel into its sample points (x + (i + 0.5) / samplerate, y + (j + 0.5) / samplerate). 
+  Because we are making every pixel a NxN grid we are essentially increasing the resolution by the sampling rate squared. 
+  To reflect this change we set the size of the sample buffer to width x height x samplingRate^2. To downsample we essentially run through
+  the same NxN for loop and add up all color values averaging them all to display for the original resolution pixel.</p>
+
+
+
+<h3 align="middle">Part 3: Transforms</h3>
+<p>I wanted to make the robot wave so I scaled its hands to be vertical and rotated them by 45 degrees so its looks like its waving. </p>
+<td>
+  <img src="images/Part_3.png" align="middle" width="400px"/>
+  <figcaption align="middle">Task 3: A robot waving with both hands</figcaption>
+</td>
+
+<h2 align="middle">Section II: Sampling</h2>
+
+<h3 align="middle">Part 4: Barycentric coordinates</h3>
+<p>Barycentric coordinates for triangles is a coordinate system that represents every point to some weighted sum of the triangles vertices.
+  Mathematically, this means that any point P inside the triangel can be expressed as a linear combination of the three vertices. 
+To determine whether a point is wihtin the triangle you just have to look at the weights of the vertices, if they are all non negative values and add up to 1 then the point is within the triangle. </p>
+<div align="middle">
+  <table border="1">
+    <tr>
+      <td>
+        <img src="images/Part_4_tri.png" align="middle" width="400px"/>
+        <figcaption align="middle">Task 4: A smoothly blended color triangle</figcaption>
+      </td>
+      <td>
+        <img src="images/Part_4_t7.png" align="middle" width="400px"/>
+        <figcaption align="middle">Task 4: Test 7 with a sampling rate 1</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<h3 align="middle">Part 5: "Pixel sampling" for texture mapping</h3>
+<p>Pixel sampling is the process of finding the color of a pixel in an image based on its coordinates.
+In respect to texture mapping we are trying to figure out where the pixels on our screen correspond to the texture space.
+Once we find the corresponding position on texture space to the image we want to render we can retireve the color of the texture element and place it in our render.</p>
+<p>Nearest Neighbor Sampling is the method in which our pixel sampling simply takes the color of the texture element that is closest to our desired coordinates.
+  To perform this sampling we simply round our coordinates to the nearest integer and take whatever color was on the texture element.  </p>
+<p>Bilinear Interpolation is slightly more complex as it is the weighted average of the four nearest texture elements surround the desired coordinate.
+  Based on how close our desired element is to each texture element we give it a cooresponding weight. 
+  Doing this means we will take more or less color from the texture element based on the distance and will overall create a smoother transition between texture elements as we render our image.</p>
+  <div align="middle">
+    <table border="1">
+      <tr>
+        <td>
+          <img src="images/Part_5_n1p.png" align="middle" width="400px"/>
+          <figcaption align="middle">Task 5: Nearest Sampling, Rate 1</figcaption>
+        </td>
+        <td>
+          <img src="images/part_5_n6p.png" align="middle" width="400px"/>
+          <figcaption align="middle">Task 5: Nearest Sampling, Rate 16</figcaption>
+        </td>
+      </tr>
+      <br>
+      <tr>
+        <td>
+          <img src="images/part_5_b1p.png" align="middle" width="400px"/>
+          <figcaption align="middle">Task 5: Biliniear Sampling, Rate 1</figcaption>
+        </td>
+        <td>
+          <img src="images/part_5_b6p.png" align="middle" width="400px"/>
+          <figcaption align="middle">Task 5: Bilinear Sampling, Rate 16</figcaption>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <p>The largest difference when comparing the two will come in large visual jumps between texture elements.
+    This is because with nearest sampling coordinates will simply round to the nearest texture element, while bilinear sampling is a blend of the nearby texture elements.
+    This blend creates a transition between texture elements making jumping between them less harsh and usually less noticeable.  
+  </p>
+<h3 align="middle">Part 6: "Level sampling" with mipmaps for texture mapping</h3>
+<p>
+  Level sampling is essentially just using mimapping which is a process that take a combination of lower-resolution versions of a texture and uses them based on
+  the texture's distance from the viewer or its projected size. To implement this we took the barycentric coordinates of every point inside our triangles (x,y), but also (x+1,y) and (x,y+1).
+  Using these two extra set of coordinates we are able to compute the mipmap level that the coordinates should be at. Knowing which level our coordinates should be sampling from allows us to
+  sample from the corresponding level which holds the resolution that pixel should be shown at.
+</p>
+
+<p>
+  Pixel Sampling is generally quite fast, particularly when using nearest neighbor sampling, but even while using bilinear is faster than more advanced techniques.
+  It is quite effecient for memory usage as it accesses texture elements directly from the texture without storing any additional data.
+  Its antialiasing power, however, is definitely on the lacking side which makes sense taking into account its high speed and lower overhead in respects to memory.
+  Pixel sampling on its own can often lead to many aliasing artifacts and pixelation.
+
+  Level Sampling, or better known as mimapping, can actually improve rendering speed by reducing texture sampling computations. This is because selecting an appropriate mip level,
+  allows for unnecessary high-frequency details to be avoided. Memory Usage on the other hand is quite heavy, as we are storing multiple versions of the texture at different resolutions.
+  Even though these other resolutions are often at much lower resolution, storing multiple versions of the texture still takes a noticable amount of space. Antialising power for mipmapping is quite high,
+  and when the corret levels are selected mipmapping can very effectively reduse aliasing by blurring and mixing things that are far in the background to be much less noticeable.
+
+  Number of samples per pixel, or better known as supersampling, is most definitely the slowest of the three. It is the most straight foward as well as it is simply taking more samples per pixel, and each sample takes computation time,
+  meaning that the speed will slow down correspondingly. Supersampling also increases memory as it is not only taking more samples but storing them which of course takes more memory. Supersampling is probably the most powerful antialising tool out of the 3
+  as it is litteraly getting closer to the original image or texture you are sampling from by taking more samples of it.
+</p>
+<div align="middle">
+  <table border="1">
+    <tr>
+      <td>
+        <img src="images/part_6_0b.png" align="middle" width="400px"/>
+        <figcaption align="middle">Task 6: Level 0, Bilinear Sampling</figcaption>
+      </td>
+      <td>
+        <img src="images/part_6_bn.png" align="middle" width="400px"/>
+        <figcaption align="middle">Task 6: Biliniear Level, Nearest Sampling</figcaption>
+      </td>
+    </tr>
+    <br>
+    <tr>
+      <td>
+        <img src="images/part_6_bb.png" align="middle" width="400px"/>
+        <figcaption align="middle">Task 6: Biliniear Level, Biliniear Sampling</figcaption>
+      </td>
+      <td>
+        <img src="images/part_6_nn.png" align="middle" width="400px"/>
+        <figcaption align="middle">Task 6: Nearest Level, Nearest Sampling</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<h2 align="middle">Section III: Art Competition</h2>
+<p>If you are not participating in the optional art competition, don't worry about this section!</p>
+
+<h3 align="middle">Part 7: Draw something interesting!</h3>
+
+</body>
 </html>
