@@ -44,7 +44,7 @@
 <h2 align="middle">Lawrence Lam</h2>
 
 <!-- Add Website URL -->
-<h2 align="middle">Website URL: <a href="TODO">TODO</a></h2>
+<h2 align="middle">Website URL: <a href="https://cal-cs184-student.github.io/hw-webpages-sp24-diandestroyer/hw3/index.html">https://cal-cs184-student.github.io/hw-webpages-sp24-diandestroyer/hw3/index.html</a></h2>
 
 <br><br>
 
@@ -319,7 +319,16 @@ You will probably want to use the instructional machines for the above renders i
   Walk through your implementation of the indirect lighting function.
 </h3>
 <p>
-    YOUR RESPONSE GOES HERE
+    I implemented indirect lighting by recursively calling at_least_one_bounce_radiance where the return was generally one_bounc_radiance.
+    To go more in depth, after being given our initial ray (r) if it still has bounces left (r.depth != 1) I evaluate the bsdf which gives the direction of the bounce (wi), pdf, and f function (reflectance * 1/pi) and using wi I create a new ray (r2). 
+    Given this new ray of the next bounce (r2) I check for intersections and solve the reflection equation with the coefficients we solved for previously where radiance (L) is the recursive call to at_least_one_bounce_radiance.
+    I add this calcilated radiance to the current ray's (r) one_bounc_radiance and return it. This recursive function stops when r.depth == 1 meaning it is on its last bounce, in which it once again simply returns its (r) one_bounc_radiance.
+    <br>
+    If isAccumBounces is false, instead of adding the recursive call to the current ray's (r) one_bounc_radiance I add it to an empty Vector3D until r.depth = 1. In which case I proceed as normal.
+    This process should result in only returning the radiance of the final bounce.  
+    <br>
+    To implement Russian Roulette I simply create a double with the termination percent (0.4) and before calculating the next bounce I coinflip with this chance.
+    If the coinflip fails, meaning I hit the 40% I simply stop calculating the bounce and return the one_bounc_radiance of the current ray (r).
 </p>
 <br>
 
@@ -363,7 +372,9 @@ You will probably want to use the instructional machines for the above renders i
 </div>
 <br>
 <p>
-    YOUR EXPLANATION GOES HERE
+    Indirect illumination is strictly when m > 1 and direct illumination is when m = 0,1. 
+    Since indirect illumination is responsible for lighting up spaces where the light does not directly touch its render looks generally brighter as there are no harsh shadows.
+    On the other hand direct illumination only lights up the pixels that the light directly interacts with on the first bounce. This means that the surfaces it touches are much brighter than the indirect illumination but the rest of the room is much darker.
 </p>
 <br>
 
@@ -437,7 +448,11 @@ You will probably want to use the instructional machines for the above renders i
   </table>
 </div>
 <p>
-  YOUR EXPLANATION GOES HERE
+  When isAccumBounces = false it is showing the illumination that the final bounce contains. This means that when m = 5 and isAccumBounces = false the render is showing the illuminance of the 5th bounce.
+  When isAccumBounces = true it is adding up the light from all the bounces up to the max_ray_depth. This means that when m = 4 and isAccumBounces = true the render is the sum of m=0,1,2,3,4 where isAccumBounces = false;
+  <br>
+  Since light generally loses energy as it travels and interacts with objects, if m increases the rendered image gets correspondingly less bright. The first 2 bounces, however, are still quite strong 
+  and this can be seen in the difference between m = 1 and m = 2 when isAccumBounces = true. The addition of the second bounce's illumination which is still quite bright demenstrates that the difference can be quite big when m is small. 
 </p>
 
 <h3>
@@ -480,7 +495,12 @@ You will probably want to use the instructional machines for the above renders i
 </div>
 <br>
 <p>
-    YOUR EXPLANATION GOES HERE
+    As the max_ray_depth increases the room generally increases in brightness. Past a max_ray_depth of 3 the changes are extremely slight, and this is because as the light bounces around the room 
+    it is adding less and less light. This can be seen in the previous section where m=5 and isAccumBounces = false as the room is almost entirely dark. 
+    This means the difference between the rendered image of m=4 and m=5 where isAccumBounces = true is the addition of the illumination in the previously described m=5 and isAccumBounces = false picture.
+    With the addition of Russian Roulette which terminates the ray based on a random chance every bounce (40%) and the illumination added with each increasing max_ray_depth being smaller every bounce
+    the changes past a max_ray_depth of 3 are hardly noticable.
+    
 </p>
 <br>
 
@@ -530,7 +550,9 @@ You will probably want to use the instructional machines for the above renders i
 </div>
 <br>
 <p>
-    YOUR EXPLANATION GOES HERE
+    As we can see pretty clearly when comparing each of these pictures there is a lot less noise when we increase the samples we take per pixel. 
+    In the pictures above, anything under 1024 samples per pixel has quite clear artifacts. This is because each pixel is the average of the accumulated illumination from the sampling rays 
+    and with a small amount of sampling rays the chance that average is skewed due to random sampling is extremely high.
 </p>
 <br>
 
@@ -546,12 +568,12 @@ Pick one scene and render it with at least 2048 samples per pixel. Show a good s
     The Monte Carlo path tracing is powerful but generates a lot of noise which is usually solved by increasing the samples per pixel. However, arbitrarily increasing the samples per pixel increases computation time and therefore also affects the rendering speed negatively.
     Adaptive sampling is a process used to cut down on this rendering time while still using a high number of samples per pixel. 
     This is possible because some pixels converge faster than others. Adaptive sampling takes advantage of this fact by concentrating the samples in the more complex parts of the image.
-
+    <br>
     How I implemented adapative sampling was to calculate the sum of every sample's illuminance as s1 and the sum of every sample's illuminance squared as s2.
     Using these two values (s1,s2) we can calculate the mean and the variance of all n samples that were taken so far. We use this mean and variance to calculate whether a pixel has converged after n samples were taken using the formula given:
     <p align="middle"><pre align="middle">I = 1.96 * std/sqrt(n)</pre></p>
-    We can then check if I is less than or equal to the maxTolerance * mean and if it is it means that the pixel has converged and we can stop taking samples of it. We don't want to constantly check this as that would increase the computational load of our render 
-    so we mod n by the variable samplesPerBatch and when this is equal to 0 (or n is divisable by the batch size) we run this check on I. 
+    We can then check if <pre>I</pre> is less than or equal to the maxTolerance * mean; if it is, it means that the pixel has converged and we can stop taking samples of it. We don't want to constantly check this as that would increase the computational load of our render 
+    so we mod n by the variable samplesPerBatch and when this is equal to 0 (n is divisable by the batch size) we run this check on I. 
 </p>
 <br>
 
