@@ -47,39 +47,6 @@
 <h2 align="middle">Website URL: <a href="https://cal-cs184-student.github.io/hw-webpages-sp24-diandestroyer/hw3/index.html">https://cal-cs184-student.github.io/hw-webpages-sp24-diandestroyer/hw3/index.html</a></h2>
 
 <br><br>
-
-
-<div align="center">
-  <table style="width=100%">
-      <tr>
-          <td align="middle">
-          <img src="images/example_image.png" width="480px" />
-          <figcaption align="middle">Results Caption: my bunny is the bounciest bunny</figcaption>
-      </tr>
-  </table>
-</div>
-
-<p>All of the text in your write-up should be <em>in your own words</em>. If you need to add additional HTML features to this document, you can search the <a href="http://www.w3schools.com/">http://www.w3schools.com/</a> website for instructions. To edit the HTML, you can just copy and paste existing chunks and fill in the text and image file names appropriately.</p>
-<o>The website writeup is intended to be a self-contained walkthrough of the assignment: we want this to be a piece of work which showcases your understanding of relevant concepts through both mesh images as well as written explanations about what you did to complete each part of the assignment. Try to be as clear and organized as possible when writing about your own output files or extensions to the assignment. We want to understand what you've achieved and how you've done it!</p> 
-<p>If you are well-versed in web development, feel free to ditch this template and make a better looking page.</p>
-
-
-<p>Here are a few problems students have encountered in the past. Test your website on the instructional machines early!</p>
-<ul>
-<li>Your main report page should be called index.html.</li>
-<li>Be sure to include and turn in all of the other files (such as images) that are linked in your report!</li>
-<li>Use only <em>relative</em> paths to files, such as <pre>"./images/image.jpg"</pre>
-Do <em>NOT</em> use absolute paths, such as <pre>"/Users/student/Desktop/image.jpg"</pre></li>
-<li>Pay close attention to your filename extensions. Remember that on UNIX systems (such as the instructional machines), capitalization matters. <pre>.png != .jpeg != .jpg != .JPG</pre></li>
-<li>Be sure to adjust the permissions on your files so that they are world readable. For more information on this please see this tutorial: <a href="http://www.grymoire.com/Unix/Permissions.html">http://www.grymoire.com/Unix/Permissions.html</a></li>
-<li>And again, test your website on the instructional machines early!</li>
-</ul>
-
-
-<p>Here is an example of how to include a simple formula:</p>
-<p align="middle"><pre align="middle">a^2 + b^2 = c^2</pre></p>
-<p>or, alternatively, you can include an SVG image of a LaTex formula.</p>
-
 <div>
 
 <h2 align="middle">Overview</h2>
@@ -125,6 +92,10 @@ Show images with normal shading for a few small .dae files. -->
 <h3>
   Show images with normal shading for a few small .dae files.
 </h3>
+<br>
+<h4>**I had a copy paste bug where I was scaling the y coordinate by the sensor_width instead of the sensor_height which I did not catch until Part 3, so renders will look a little squished until then.
+  Renders should be correct aside from this scaling issue.
+</h4>
 <!-- Example of including multiple figures -->
 <div align="middle">
   <table style="width:100%">
@@ -172,6 +143,10 @@ Compare rendering times on a few scenes with moderately complex geometries with 
 <h3>
   Show images with normal shading for a few large .dae files that you can only render with BVH acceleration.
 </h3>
+<br>
+<h4>**I had a copy paste bug where I was scaling the y coordinate by the sensor_width instead of the sensor_height which I did not catch until Part 3, so renders will look a little squished until then.
+  Renders should be correct aside from this scaling issue.
+</h4>
 <!-- Example of including multiple figures -->
 <div align="middle">
   <table style="width:100%">
@@ -241,23 +216,23 @@ Compare the results between uniform hemisphere sampling and lighting sampling in
     <br>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example1.dae</figcaption>
+        <img src="images/p3bunnyh.png" align="middle" width="400px"/>
+        <figcaption>CBbunny.dae</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example1.dae</figcaption>
+        <img src="images/p3CBbunnyi.png" align="middle" width="400px"/>
+        <figcaption>CBbunny.dae</figcaption>
       </td>
     </tr>
     <br>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example2.dae</figcaption>
+        <img src="images/p3spheresh.png" align="middle" width="400px"/>
+        <figcaption>CBspheres_lambertian.dae</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example2.dae</figcaption>
+        <img src="images/p3spheresi.png" align="middle" width="400px"/>
+        <figcaption>CBspheres_lambertian.dae</figcaption>
       </td>
     </tr>
     <br>
@@ -273,22 +248,22 @@ Compare the results between uniform hemisphere sampling and lighting sampling in
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="200px"/>
-        <figcaption>1 Light Ray (example1.dae)</figcaption>
+        <img src="images/p3dragonl1.png" align="middle" width="200px"/>
+        <figcaption>1 Light Ray (dragon.dae)</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="200px"/>
-        <figcaption>4 Light Rays (example1.dae)</figcaption>
+        <img src="images/p3dragonl4.png" align="middle" width="200px"/>
+        <figcaption>4 Light Rays (dragon.dae)</figcaption>
       </td>
     </tr>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="200px"/>
-        <figcaption>16 Light Rays (example1.dae)</figcaption>
+        <img src="images/p3dragonl16.png" align="middle" width="200px"/>
+        <figcaption>16 Light Rays (dragon.dae)</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="200px"/>
-        <figcaption>64 Light Rays (example1.dae)</figcaption>
+        <img src="images/p3dragonl64.png" align="middle" width="200px"/>
+        <figcaption>64 Light Rays (dragon.dae)</figcaption>
       </td>
     </tr>
   </table>
@@ -319,7 +294,7 @@ You will probably want to use the instructional machines for the above renders i
   Walk through your implementation of the indirect lighting function.
 </h3>
 <p>
-    I implemented indirect lighting by recursively calling at_least_one_bounce_radiance where the return was generally one_bounc_radiance.
+    I implemented indirect lighting by recursively calling at_least_one_bounce_radiance where the return was generally one_bounc_radiance + reflection equation where L = at_least_one_bounce_radiance of the next bounce.
     To go more in depth, after being given our initial ray (r) if it still has bounces left (r.depth != 1) I evaluate the bsdf which gives the direction of the bounce (wi), pdf, and f function (reflectance * 1/pi) and using wi I create a new ray (r2). 
     Given this new ray of the next bounce (r2) I check for intersections and solve the reflection equation with the coefficients we solved for previously where radiance (L) is the recursive call to at_least_one_bounce_radiance.
     I add this calcilated radiance to the current ray's (r) one_bounc_radiance and return it. This recursive function stops when r.depth == 1 meaning it is on its last bounce, in which it once again simply returns its (r) one_bounc_radiance.
@@ -449,7 +424,7 @@ You will probably want to use the instructional machines for the above renders i
 </div>
 <p>
   When isAccumBounces = false it is showing the illumination that the final bounce contains. This means that when m = 5 and isAccumBounces = false the render is showing the illuminance of the 5th bounce.
-  When isAccumBounces = true it is adding up the light from all the bounces up to the max_ray_depth. This means that when m = 4 and isAccumBounces = true the render is the sum of m=0,1,2,3,4 where isAccumBounces = false;
+  When isAccumBounces = true it is adding up the light from all the bounces up to the max_ray_depth. This means that when m = 4 and isAccumBounces = true the render is the sum of m=0,1,2,3,4 where isAccumBounces = false.
   <br>
   Since light generally loses energy as it travels and interacts with objects, if m increases the rendered image gets correspondingly less bright. The first 2 bounces, however, are still quite strong 
   and this can be seen in the difference between m = 1 and m = 2 when isAccumBounces = true. The addition of the second bounce's illumination which is still quite bright demenstrates that the difference can be quite big when m is small. 
@@ -572,7 +547,7 @@ Pick one scene and render it with at least 2048 samples per pixel. Show a good s
     How I implemented adapative sampling was to calculate the sum of every sample's illuminance as s1 and the sum of every sample's illuminance squared as s2.
     Using these two values (s1,s2) we can calculate the mean and the variance of all n samples that were taken so far. We use this mean and variance to calculate whether a pixel has converged after n samples were taken using the formula given:
     <p align="middle"><pre align="middle">I = 1.96 * std/sqrt(n)</pre></p>
-    We can then check if <pre>I</pre> is less than or equal to the maxTolerance * mean; if it is, it means that the pixel has converged and we can stop taking samples of it. We don't want to constantly check this as that would increase the computational load of our render 
+    We can then check if I is less than or equal to the maxTolerance * mean; if it is, it means that the pixel has converged and we can stop taking samples of it. We don't want to constantly check this as that would increase the computational load of our render 
     so we mod n by the variable samplesPerBatch and when this is equal to 0 (n is divisable by the batch size) we run this check on I. 
 </p>
 <br>
