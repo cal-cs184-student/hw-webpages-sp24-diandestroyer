@@ -51,7 +51,11 @@
 
 <h2 align="middle">Overview</h2>
 <p>
-    YOUR RESPONSE GOES HERE
+    In this project I delved into the implementation and optimization of a path tracer for generating realistic images with accurate lighting and shading effects. 
+    We stepped through the entire process through converting our pixels in the image space to world space all the way to calculating the radiance of a surface based off of the rays emitted by the light sources and their bounces.
+    To step through the entire process we chose a pixel on our image that we want to render, we then convert those pixel coordinates to some ray projected from the camera to the camera sensor. Through this camera ray we are able to record
+    the radiance and color of that specific pixel. The radiance and color is determined based on the light sources in the scene where each one emits a number of rays
+    and based on rendering options the light rays can bounce, accumulate the bounces or not, change the # of samples per area light, or change the camera sampling rate all which affect the resulting render in different ways.
 </p>
 <br>
 
@@ -92,7 +96,6 @@ Show images with normal shading for a few small .dae files. -->
 <h3>
   Show images with normal shading for a few small .dae files.
 </h3>
-<br>
 <h4>**I had a copy paste bug where I was scaling the y coordinate by the sensor_width instead of the sensor_height which I did not catch until Part 3, so renders will look a little squished until then.
   Renders should be correct aside from this scaling issue.
 </h4>
@@ -143,7 +146,6 @@ Compare rendering times on a few scenes with moderately complex geometries with 
 <h3>
   Show images with normal shading for a few large .dae files that you can only render with BVH acceleration.
 </h3>
-<br>
 <h4>**I had a copy paste bug where I was scaling the y coordinate by the sensor_width instead of the sensor_height which I did not catch until Part 3, so renders will look a little squished until then.
   Renders should be correct aside from this scaling issue.
 </h4>
@@ -195,7 +197,16 @@ Compare the results between uniform hemisphere sampling and lighting sampling in
   Walk through both implementations of the direct lighting function.
 </h3>
 <p>
-    YOUR RESPONSE GOES HERE
+    I implemented uniform hemisphere sampling by creating num_samples amount of rays that are uniformly spaced in the hemisphere above the hit point (hit_p) and ensuring each ray.min_t = EPS_F. 
+    For each ray we check if it intersects with an object and if it does solve the Reflection Equation given in lecture using the Monte Carlo Estimator and add its result to L_out;
+    Once we have iterated through all our rays we divide our total radiance (L_out) by the total number of samples/rays (num_samples).
+    <br>
+    For light importance sampling we iterate through every light source in the scene, and sample it ns_area_light # of times unless it is a delta light in which case we sample it once.
+    From the sampling function (sampl_L) we are given a vector (wi) in the world space that points from the hit point (hit_p) to the light source. We want to convert this vector into the object space and check if the z component is negative.
+    If the z component is negative it means that the light does not reach the hit point and we can safely ignore its radiance value. If the z-component is positive we want to create a ray given the hit point (hit_p) as its origin and the direction as the created vector (wi).
+    Once we create this ray make sure to again set r.min_t = EPS_F, but also set r.max_t = dis_to_light - EPS_F as we only care if there is an object blocking the light and setting this r.max_t allows us to avoid checking the intersection with the light itself.
+    With the ray created we can check if there is an intersection, if there is we can also disregard its radiance value as it is blocked by an object. We sum up the radiance of all the rays that do not intersect with an object then divide it by the # of times we sample the light.
+    We then add this average to sum of averages of every light in the scene, then we return this sum of averages of every light in the scene then divided by the # of lights in the scene. 
 </p>
 
 <h3>
@@ -248,28 +259,31 @@ Compare the results between uniform hemisphere sampling and lighting sampling in
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/p3dragonl1.png" align="middle" width="200px"/>
+        <img src="images/p3dragonl1.png" align="middle" width="400px"/>
         <figcaption>1 Light Ray (dragon.dae)</figcaption>
       </td>
       <td>
-        <img src="images/p3dragonl4.png" align="middle" width="200px"/>
+        <img src="images/p3dragonl4.png" align="middle" width="400px"/>
         <figcaption>4 Light Rays (dragon.dae)</figcaption>
       </td>
     </tr>
     <tr align="center">
       <td>
-        <img src="images/p3dragonl16.png" align="middle" width="200px"/>
+        <img src="images/p3dragonl16.png" align="middle" width="400px"/>
         <figcaption>16 Light Rays (dragon.dae)</figcaption>
       </td>
       <td>
-        <img src="images/p3dragonl64.png" align="middle" width="200px"/>
+        <img src="images/p3dragonl64.png" align="middle" width="400px"/>
         <figcaption>64 Light Rays (dragon.dae)</figcaption>
       </td>
     </tr>
   </table>
 </div>
 <p>
-    YOUR EXPLANATION GOES HERE
+    With the # of samples per pixel being 1 (s = 1) the render will be extremely noisy. This is compounded with the fact that with a low # of samples per area light 
+    it is very likely that each point's average radiance is skewed due to random sampling. As we increase l each point will be much more uniform and even with the unpredictable random sampling size of 1,
+    the chance that the sample finds the correct radiance is much higher. This is shown as there are clear artifacts for all pictures where l is less than 64
+    and in the 64 light rays picture the entire render is very smooth with little visual artifacts.
 </p>
 <br>
 
@@ -277,7 +291,11 @@ Compare the results between uniform hemisphere sampling and lighting sampling in
   Compare the results between uniform hemisphere sampling and lighting sampling in a one-paragraph analysis.
 </h3>
 <p>
-    YOUR RESPONSE GOES HERE
+  Uniform hemisphere sampling distributes its sampling rays evenly across the hemisphere around the hit point, meaning it treats all directions equally. 
+  While this is simple to implement it is often an extremely inefficient way of sampling resulting in slow convergence and increased noise in the rendered images. 
+  This effect is exacerbated in complex lighting environments. Importance lighting sampling, on the other hand, focuses its sampling efforts on directions that contribute most to the final image. 
+  This is typically done by sampling directions according to the light distribution in the scene. This approach typically leads to faster convergence and reduced noise levels. 
+  By concentrating its samples in areas with significant lighting contributions, importance lighting sampling achieves higher quality results with fewer samples in comparison to uniform hemisphere sampling.
 </p>
 <br>
 
